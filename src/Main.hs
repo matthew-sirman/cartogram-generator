@@ -4,7 +4,8 @@ import Codec.Picture
 import ImageParse
 import ImageGen
 import ProcessMap
+import Helper.MatchGenerator
 
 
 main :: IO ()
-main = processMain
+main = matchMain
