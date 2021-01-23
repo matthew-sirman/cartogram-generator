@@ -26,49 +26,48 @@ of countryMapToColorMap and convert into an Image.
 -}
 
 nestedListToVector nl = 
-	V.fromList (map V.fromList nl)
+    V.fromList (map V.fromList nl)
 
 
 nRandomRGBVals seed n =
-	take n $ randomRs (0, 255) (mkStdGen seed)
-	-- fix: do something else instead of mkStdGen
+    take n $ randomRs (0, 255) (mkStdGen seed)
+    -- fix: do something else instead of mkStdGen
 
 pairListsIntoTriples [] [] [] = []
 pairListsIntoTriples (a:as) (b:bs) (c:cs) =
-	(a, b, c) : (pairListsIntoTriples as bs cs)
+    (a, b, c) : (pairListsIntoTriples as bs cs)
 
 nRandomColTuples n =
-	pairListsIntoTriples
-		(nRandomRGBVals 0 n)
-		(nRandomRGBVals 1 n)
-		(nRandomRGBVals 2 n)
+    pairListsIntoTriples
+        (nRandomRGBVals 0 n)
+        (nRandomRGBVals 1 n)
+        (nRandomRGBVals 2 n)
 
 colorTupleMap colors els =
-	randomColorMapper colors els M.empty
-	where
-		randomColorMapper colors els mp = if els == [] then mp else
-			randomColorMapper
-				(tail colors)
-				(tail els)
-				(M.insert (head els) (head colors) mp)
-
+    randomColorMapper colors els M.empty
+    where
+        randomColorMapper colors els mp = if els == [] then mp else
+            randomColorMapper
+                (tail colors)
+                (tail els)
+                (M.insert (head els) (head colors) mp)
 
 countryMapToColorMap cmap =
-	map
-		(\row -> (map
-			(\ccode -> case (M.lookup ccode colorsMap) of
-				Just (r, g, b) -> PixelRGB8 r g b
-				Nothing -> PixelRGB8 0 0 0)
-			row))
-		cmap
-	where
-		colorsMap =
-			colorTupleMap (nRandomColTuples 256) (nestedListElements cmap) 
+    map
+        (\row -> (map
+            (\ccode -> case (M.lookup ccode colorsMap) of
+                Just (r, g, b) -> PixelRGB8 r g b
+                Nothing -> PixelRGB8 0 0 0)
+            row))
+        cmap
+    where
+        colorsMap =
+            colorTupleMap (nRandomColTuples 256) (nestedListElements cmap) 
 
 getImageFromList nlMap =
-	generateImage
-		(\x -> \y -> (vmap V.! y) V.! x)
-		(V.length (vmap V.! 0))
-		(V.length vmap)
-	where
-		vmap = nestedListToVector nlMap
+    generateImage
+        (\x -> \y -> (vmap V.! y) V.! x)
+        (V.length (vmap V.! 0))
+        (V.length vmap)
+    where
+        vmap = nestedListToVector nlMap

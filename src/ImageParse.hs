@@ -18,36 +18,35 @@ country codes, and returns a nested list of country codes
 in place of pixels, or the emptry string if the pixel
 has a color not corresponding to a country.
 -}
-
 rowLooper img y x =
-	if x == -1 then [] else
-		(pixelAt img x y) : (rowLooper img y (x - 1))
+    if x == -1 then [] else
+        (pixelAt img x y) : (rowLooper img y (x - 1))
 
 parseImage img =
-	map (parseImgRow img)
-		[0..((imageHeight img) - 1)]
-	where
-		parseImgRow img y =
-			rowLooper img y ((imageWidth img) - 1)
+    map (parseImgRow img)
+        [0..((imageHeight img) - 1)]
+    where
+        parseImgRow img y =
+            rowLooper img y ((imageWidth img) - 1)
 
 pixelToTuple (PixelRGB8 r g b) = (r, g, b)
 
 colTupleMap img =
-	map
-		(\row -> (map (\px -> (pixelToTuple px)) row))
-		(parseImage img)
+    map
+        (\row -> (map (\px -> (pixelToTuple px)) row))
+        (parseImage img)
 
 codeLookup colToCode t =
-	case (M.lookup t colToCode) of
-			Just str -> str
-			Nothing -> ""
+    case (M.lookup t colToCode) of
+            Just str -> str
+            Nothing -> ""
 
 countryMap img colToCode =
-	map
-		(\row -> (map (\t -> (find t)) row))
-		(colTupleMap img)
-	where
-		find = codeLookup colToCode
+    map
+        (\row -> (map (\t -> (find t)) row))
+        (colTupleMap img)
+    where
+        find = codeLookup colToCode
 
 
 
@@ -64,18 +63,18 @@ above cases) from elements to counts.
 -}
 
 consumeElementToFreqMap mp el =
-	case (M.lookup el mp) of
-		Just n -> (M.insert el (n + 1) mp)
-		Nothing -> (M.insert el 1 mp)
+    case (M.lookup el mp) of
+        Just n -> (M.insert el (n + 1) mp)
+        Nothing -> (M.insert el 1 mp)
 
 consumeListToFreqMap mp l =
-	foldl
-		consumeElementToFreqMap
-		M.empty
-		l
+    foldl
+        consumeElementToFreqMap
+        M.empty
+        l
 
 frequencyMap nestedList =
-	consumeListToFreqMap M.empty (concat nestedList)
+    consumeListToFreqMap M.empty (concat nestedList)
 
 nestedListElements nestedList =
-	M.keys (frequencyMap nestedList)
+    M.keys (frequencyMap nestedList)
