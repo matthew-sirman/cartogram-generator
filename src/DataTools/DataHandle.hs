@@ -68,8 +68,7 @@ interpolate (d1, f1) (d2, f2) d = f1 + (f2 - f1) * deltaT / totalT
 
 -- Fetches data given a CountryData database, country code, and UTCTime
 fetchData :: CountryData -> String -> UTCTime -> Maybe Float
-fetchData dataContent countryCode date = do
-	database <- countryData dataContent
+fetchData dataContent countryCode date =
 	case M.lookup countryCode database of
 		Just content -> | null sortedDates -> Nothing
 						| head sortedDates > date -> Nothing
@@ -79,3 +78,4 @@ fetchData dataContent countryCode date = do
 								  d2  = head (filter (> date) sortedDates)
 					where sortedDates <- sort [fst dataPoint | dataPoint <- M.assocs content]
 		Nothing -> Nothing
+	where database = countryData dataContent
