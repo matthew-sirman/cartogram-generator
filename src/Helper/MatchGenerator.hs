@@ -1,9 +1,9 @@
 module Helper.MatchGenerator (
-
+    createHelperImage
 ) where
 
-import qualified Graphics.Gloss as G
-import Graphics.Gloss.Juicy
+import Graphics.Gloss
+import Graphics.Gloss.Data.Color
 
 loadTextFileStrings :: FilePath -> IO [String]
 loadTextFileStrings fp = do
@@ -11,12 +11,16 @@ loadTextFileStrings fp = do
     pure $ lines raw
 
 -- Takes country list
-createHelperImage :: [String] -> Picture
-createHelperImage cs = G.pictures $ map createEntry $ zip [0..] cs
+createHelperImage :: FilePath -> IO Picture
+createHelperImage fp = do
+    cs <- loadTextFileStrings fp
+    pure $ pictures $ map createEntry $ zip [0..] cs
+
     where
-        createEntry (index, country) = G.pictures 
+        createEntry (index, country) = pictures $ map (translate 0 (fromIntegral index * (-30)))
             [ nameText country
-            , colourSquare $ genColour index
+            , colourSquare (genColour index)
             ]
-
-
+        nameText = translate (-100) 0 . scale 0.1 0.1 . text
+        colourSquare col = translate 200 0 $ color col $ rectangleSolid 25 25
+        genColour i = makeColorI i i i 255
