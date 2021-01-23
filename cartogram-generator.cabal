@@ -21,5 +21,8 @@ executable cartogram-generator
   -- other-modules:
   -- other-extensions:
   build-depends:       base ^>=4.14.1.0
+                     , gloss
+                     , gloss-juicy
   hs-source-dirs:      src
+  ghc-options:         -Wall -dynamic
   default-language:    Haskell2010
