@@ -4,6 +4,7 @@ module Csv.Parser  (
     CSV(..)
   , emptyCSV
   , csvParser
+  , Parser(..)
 ) where
 
 import Control.Applicative
