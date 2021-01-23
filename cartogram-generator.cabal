@@ -26,5 +26,5 @@ executable cartogram-generator
                      , JuicyPixels
                      , containers
   hs-source-dirs:      src
-  ghc-options:         -Wall -dynamic
+  ghc-options:         -Wall
   default-language:    Haskell2010
