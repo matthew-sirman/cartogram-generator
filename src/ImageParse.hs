@@ -21,7 +21,7 @@ has a color not corresponding to a country.
 
 rowLooper img y x =
 	if x == -1 then [] else
-	(pixelAt img x y) : (rowLooper img y (x - 1))
+		(pixelAt img x y) : (rowLooper img y (x - 1))
 
 parseImage img =
 	map (parseImgRow img)
@@ -76,3 +76,6 @@ consumeListToFreqMap mp l =
 
 frequencyMap nestedList =
 	consumeListToFreqMap M.empty (concat nestedList)
+
+nestedListElements nestedList =
+	M.keys (frequencyMap nestedList)
