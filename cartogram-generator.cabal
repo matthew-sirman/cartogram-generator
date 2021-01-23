@@ -27,6 +27,6 @@ executable cartogram-generator
                      , gloss-export
                      , JuicyPixels
                      , containers
+                     , vector
   hs-source-dirs:      src
-  ghc-options:         -Wall
   default-language:    Haskell2010

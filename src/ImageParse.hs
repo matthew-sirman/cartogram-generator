@@ -48,3 +48,31 @@ countryMap img colToCode =
 		(colTupleMap img)
 	where
 		find = codeLookup colToCode
+
+
+
+{-
+consumeListToFreqMap takes a map of keys X to integers
+and a list, and adds the frequency of each X
+in the list to the current value it maps to
+(i.e. builds a frequency map one list at a time).
+
+frequencyMap takes a nested list (such as what you
+get from countryMap or colTupleMap) and returns
+a map (tuples / country codes respectively in the
+above cases) from elements to counts.
+-}
+
+consumeElementToFreqMap mp el =
+	case (M.lookup el mp) of
+		Just n -> (M.insert el (n + 1) mp)
+		Nothing -> (M.insert el 1 mp)
+
+consumeListToFreqMap mp l =
+	foldl
+		consumeElementToFreqMap
+		M.empty
+		l
+
+frequencyMap nestedList =
+	consumeListToFreqMap M.empty (concat nestedList)
