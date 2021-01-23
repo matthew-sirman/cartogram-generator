@@ -7,19 +7,21 @@ module DataHandle(
 import Csv.Parser
 import qualified Data.Map as M
 import Data.Time
+import Data.List (sort)
 import System.IO
+import System.Directory (listDirectory)
 
-data CountryData = CountryData { countryData :: M String (M UTCTime Float) }
+data CountryData = CountryData { countryData :: M.Map String (M.Map UTCTime Float) } deriving Show
 
-countryToCode :: IO (M String String)
+countryToCode :: IO (M.Map String String)
 countryToCode = do
-    contents <- readFile "../res/vaccinations/locations.csv"
+    contents <- readFile "res/vaccinations/locations.csv"
     
     pure $ process contents
     where
-        process :: String -> M String String
+        process :: String -> M.Map String String
         process fd = case runParser (csvParser ',' True) fd of
-                        Left err -> error err
+                        Left err -> error "Parser error"
                         Right (_, csv) -> M.fromList $ zip [record !! 0 | record <- records csv] [record !! 1 | record <- records csv]
     
     
@@ -29,53 +31,47 @@ parseDate :: String -> String -> UTCTime
 parseDate dateString dateFormat = parseTimeOrError True defaultTimeLocale dateFormat dateString
 
 -- Parses a specific file
-parseFile :: String -> IO ((String, (M UTCTime Float)))
+parseFile :: String -> String -> IO ((String, (M.Map UTCTime Float)))
 parseFile filename dateFormat = do
     contents <- readFile filename
     pure $ process contents
     
     where
-        process :: String -> (String, (M UTCTime Float))
+        process :: String -> (String, (M.Map UTCTime Float))
         process fd = case runParser (csvParser ',' True) fd of
-                        Left err -> error err
-                        Right (_, csv) -> (country, M.fromList zip [getDate row | row <- records csv] [getStatistic row | row <- records csv])
+                        Left err -> error "Parser error"
+                        Right (_, csv) -> (country, M.fromList (zip [getDate row | row <- records csv] [getStatistic row | row <- records csv]))
                                             where country = ((records csv) !! 0) !! 0
                                                   getDate row = parseDate (row !! 1) dateFormat
                                                   getStatistic row = read (row !! 4) :: Float
     
     
 -- Loads data from directory with csv names as {Country}.csv
-loadData :: String -> IO (CountryData)
+loadData :: String -> String -> IO (CountryData)
 loadData directory dateFormat = do
     fileNames <- listDirectory directory
-    dataContent <- sequence [parseFile fileName dateFormat | fileName <- fileNames]
+    dataContent <- sequence [parseFile (directory ++ fileName) dateFormat | fileName <- fileNames]
     
     processedData <- process dataContent
     
     pure $ CountryData { countryData = processedData }
     
     where
-        process :: [(String, (M UTCTime Float))] -> IO (M String (M UTCTime Float))
+        process :: [(String, (M.Map UTCTime Float))] -> IO (M.Map String (M.Map UTCTime Float))
         process dataContent = do
-            cntryCode <- countryToCode
-            pure $ M.fromList [(cntryCode !! (fst dataPoint), snd dataPoint) | dataPoint <- dataContent]
+            countryCodes <- countryToCode
+            pure $ M.fromList [(let Just countryCode = M.lookup (fst dataPoint) countryCodes in (countryCode, snd dataPoint)) | dataPoint <- dataContent, M.member (fst dataPoint) countryCodes]
 
 -- Interpolates the statistic between two know data points
 interpolate :: (UTCTime, Float) -> (UTCTime, Float) -> UTCTime -> Float 
 interpolate (d1, f1) (d2, f2) d = f1 + (f2 - f1) * deltaT / totalT
-    where deltaT = nominalDiffTimeToSeconds (diffUTCTime d d1)
-          totalT = nominalDiffTimeToSeconds (diffUTCTime d2 d1)
+    where deltaT = fromIntegral $ round $ nominalDiffTimeToSeconds (diffUTCTime d d1)
+          totalT = fromIntegral $ round $ nominalDiffTimeToSeconds (diffUTCTime d2 d1)
 
 -- Fetches data given a CountryData database, country code, and UTCTime
 fetchData :: CountryData -> String -> UTCTime -> Maybe Float
-fetchData dataContent countryCode date =
-    case M.lookup countryCode database of
-        Just content -> | null sortedDates -> Nothing
-                        | head sortedDates > date -> Nothing
-                        | last sortedDates < date -> Nothing
-                        | otherwise -> Just (interpolate (d1, database !! d1) (d2, database !! d2) date)
-                            where d1 = last (filter (<= date) sortedDates)
-                                  d2  = head (filter (> date) sortedDates)
-                    where sortedDates <- sort [fst dataPoint | dataPoint <- M.assocs content]
-        Nothing -> Nothing
-    where database = countryData dataContent
+fetchData dataContent countryCode date = do
+    content <- M.lookup countryCode (countryData dataContent)
+    let sortedDates = sort (M.assocs content)
+        p1 = last (filter (<= (date, 0)) sortedDates)
+        p2 = head (filter (> (date, 0)) sortedDates) in if (null sortedDates || fst (head sortedDates) > date || fst (last sortedDates) < date) then Nothing else Just (interpolate p1 p2 date)
