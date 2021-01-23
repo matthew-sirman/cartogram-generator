@@ -24,6 +24,7 @@ executable cartogram-generator
   build-depends:       base ^>=4.14.1.0
                      , gloss
                      , gloss-juicy
+                     , gloss-export
                      , JuicyPixels
                      , containers
   hs-source-dirs:      src
