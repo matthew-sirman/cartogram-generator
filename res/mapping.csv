@@ -1,0 +1,217 @@
+AFG;Afghanistan;1
+ALB;Albania;2
+DZA;Algeria;3
+AND;Andorra;4
+AGO;Angola;5
+ATA;Antarctica;6
+ATG;Antigua and Barbuda;7
+ARG;Argentina;8
+ARM;Armenia;9
+AUS;Australia;10
+AUT;Austria;11
+AZE;Azerbaijan;12
+BHS;Bahamas;13
+BHR;Bahrain;14
+BGD;Bangladesh;15
+BRB;Barbados;16
+BLR;Belarus;17
+BEL;Belgium;18
+BLZ;Belize;19
+BEN;Benin;20
+BMU;Bermuda;21
+BTN;Bhutan;22
+BOL;Bolivia, Plurinational State of;23
+BIH;Bosnia and Herzegovina;24
+BWA;Botswana;25
+BRA;Brazil;26
+BRN;Brunei Darussalam;27
+BGR;Bulgaria;28
+BFA;Burkina Faso;29
+BDI;Burundi;30
+KHM;Cambodia;31
+CMR;Cameroon;32
+CAN;Canada;33
+CPV;Cape Verde;34
+CYM;Cayman Islands;35
+CAF;Central African Republic;36
+TCD;Chad;37
+CHL;Chile;38
+CHN;China;39
+COL;Colombia;40
+COM;Comoros;41
+COG;Congo;42
+COD;Congo, the Democratic Republic of the;43
+COK;Cook Islands;44
+CRI;Costa Rica;45
+CIV;Côte d'Ivoire;46
+HRV;Croatia;47
+CUB;Cuba;48
+CYP;Cyprus;49
+CZE;Czech Republic;50
+DNK;Denmark;51
+DJI;Djibouti;52
+DMA;Dominica;53
+DOM;Dominican Republic;54
+ECU;Ecuador;55
+EGY;Egypt;56
+SLV;El Salvador;57
+GNQ;Equatorial Guinea;58
+ERI;Eritrea;59
+EST;Estonia;60
+ETH;Ethiopia;61
+FRO;Faroe Islands;62
+FJI;Fiji;63
+FIN;Finland;64
+FRA;France;65
+GUF;French Guiana;66
+GAB;Gabon;67
+GMB;Gambia;68
+GEO;Georgia;69
+DEU;Germany;70
+GHA;Ghana;71
+GIB;Gibraltar;72
+GRC;Greece;73
+GRL;Greenland;74
+GRD;Grenada;75
+GTM;Guatemala;76
+GGY;Guernsey;77
+GIN;Guinea;78
+GNB;Guinea-Bissau;79
+GUY;Guyana;80
+HTI;Haiti;81
+VAT;Holy See (Vatican City State);82
+HND;Honduras;83
+HKG;Hong Kong;84
+HUN;Hungary;85
+ISL;Iceland;86
+IND;India;87
+IDN;Indonesia;88
+IRN;Iran, Islamic Republic of;89
+IRQ;Iraq;90
+IRL;Ireland;91
+ISR;Israel;92
+ITA;Italy;93
+JAM;Jamaica;94
+JPN;Japan;95
+JEY;Jersey;96
+JOR;Jordan;97
+KAZ;Kazakhstan;98
+KEN;Kenya;99
+KIR;Kiribati;100
+PRK;Korea, Democratic People's Republic of;101
+KOR;Korea, Republic of;102
+KWT;Kuwait;103
+KGZ;Kyrgyzstan;104
+LAO;Lao People's Democratic Republic;105
+LVA;Latvia;106
+LBN;Lebanon;107
+LSO;Lesotho;108
+LBR;Liberia;109
+LBY;Libyan Arab Jamahiriya;110
+LIE;Liechtenstein;111
+LTU;Lithuania;112
+LUX;Luxembourg;113
+MAC;Macao;114
+MKD;Macedonia, the former Yugoslav Republic of;115
+MDG;Madagascar;116
+MWI;Malawi;117
+MYS;Malaysia;118
+MDV;Maldives;119
+MLI;Mali;120
+MLT;Malta;121
+MHL;Marshall Islands;122
+MTQ;Martinique;123
+MRT;Mauritania;124
+MUS;Mauritius;125
+MYT;Mayotte;126
+MEX;Mexico;127
+FSM;Micronesia, Federated States of;128
+MDA;Moldova, Republic of;129
+MCO;Monaco;130
+MNG;Mongolia;131
+MNE;Montenegro;132
+MAR;Morocco;133
+MOZ;Mozambique;134
+MMR;Myanmar;135
+NAM;Namibia;136
+NRU;Nauru;137
+NPL;Nepal;138
+NLD;Netherlands;139
+NZL;New Zealand;140
+NIC;Nicaragua;141
+NER;Niger;142
+NGA;Nigeria;143
+NOR;Norway;144
+OMN;Oman;145
+PAK;Pakistan;146
+PLW;Palau;147
+PSE;Palestinian Territory, Occupied;148
+PAN;Panama;149
+PNG;Papua New Guinea;150
+PRY;Paraguay;151
+PER;Peru;152
+PHL;Philippines;153
+PCN;Pitcairn;154
+POL;Poland;155
+PRT;Portugal;156
+PRI;Puerto Rico;157
+QAT;Qatar;158
+ROU;Romania;159
+RUS;Russian Federation;160
+RWA;Rwanda;161
+BLM;Saint Barthélemy;162
+SHN;Saint Helena, Ascension and Tristan da Cunha;163
+KNA;Saint Kitts and Nevis;164
+LCA;Saint Lucia;165
+SPM;Saint Pierre and Miquelon;166
+VCT;Saint Vincent and the Grenadines;167
+WSM;Samoa;168
+SMR;San Marino;169
+STP;Sao Tome and Principe;170
+SAU;Saudi Arabia;171
+SEN;Senegal;172
+SRB;Serbia;173
+SYC;Seychelles;174
+SLE;Sierra Leone;175
+SGP;Singapore;176
+SVK;Slovakia;177
+SVN;Slovenia;178
+SLB;Solomon Islands;179
+SOM;Somalia;180
+ZAF;South Africa;181
+ESP;Spain;182
+LKA;Sri Lanka;183
+SDN;Sudan;184
+SUR;Suriname;185
+SWZ;Swaziland;186
+SWE;Sweden;187
+CHE;Switzerland;188
+SYR;Syrian Arab Republic;189
+TWN;Taiwan, Province of China;190
+TJK;Tajikistan;191
+TZA;Tanzania, United Republic of;192
+THA;Thailand;193
+TLS;Timor-Leste;194
+TGO;Togo;195
+TKL;Tokelau;196
+TON;Tonga;197
+TTO;Trinidad and Tobago;198
+TUN;Tunisia;199
+TUR;Turkey;200
+TKM;Turkmenistan;201
+TCA;Turks and Caicos Islands;202
+TUV;Tuvalu;203
+UGA;Uganda;204
+UKR;Ukraine;205
+ARE;United Arab Emirates;206
+GBR;United Kingdom;207
+USA;United States;208
+URY;Uruguay;209
+UZB;Uzbekistan;210
+VUT;Vanuatu;211
+VEN;Venezuela, Bolivarian Republic of;212
+VNM;Viet Nam;213
+ESH;Western Sahara;214
+YEM;Yemen;215
+ZMB;Zambia;216
+ZWE;Zimbabwe;217

@@ -7,7 +7,7 @@ import System.Random
 import qualified Data.Map as M
 
 transposeNestedList nl =
-    if null (head nl) then [] else
+    if null nl || null (head nl) then [] else
         (map head nl) : (transposeNestedList (map tail nl))
 
 padBy paddingEl 0 l = l
@@ -34,7 +34,7 @@ nRandFloats seed n =
 
 randFloatsMap seed cmap = 
     let rowLength = length (head cmap) in
-    map (\_ -> nRandFloats seed rowLength) [1..(length cmap)]
+    map (const $ nRandFloats seed rowLength) [1..(length cmap)]
 
 {-
 scaleFactorsMap get a map where instead of country codes in each
@@ -107,9 +107,9 @@ rescaleAreas seed1 seed2 scaleFactors cmap =
     -- ... then transpose the result to get back in original orientation
     transposeNestedList withColumnsDone
 
-processMain :: IO ()
-processMain = do
-    x <- readImage "test.bmp"
+processMain :: FilePath -> IO ()
+processMain fp = do
+    x <- readImage fp
     y <- process x
     pure ()
     where

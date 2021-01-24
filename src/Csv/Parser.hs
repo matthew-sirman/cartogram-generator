@@ -1,11 +1,13 @@
 {-# LANGUAGE FlexibleInstances #-}
 
-module Csv.Parser  (
-    CSV(..)
-  , emptyCSV
-  , csvParser
-  , Parser(..)
-) where
+-- module Csv.Parser  (
+--     CSV(..)
+--   , emptyCSV
+--   , csvParser
+--   , Parser(..)
+-- ) where
+
+module Csv.Parser where
 
 import Control.Applicative
 

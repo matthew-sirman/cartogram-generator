@@ -51,7 +51,7 @@ resFolder = "res/"
 matchMain :: IO ()
 matchMain = do
     rawFile <- readFile countriesFile
-    case runParser (csvParser ';' True) rawFile of
+    case runParser (csvParser ';' True) (rawFile ++ "\n") of
         Left (Just err) -> error err
         Left Nothing -> error "Unknown error!"
         Right (_, csv) -> do 

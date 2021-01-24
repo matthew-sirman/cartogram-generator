@@ -20,6 +20,8 @@ executable cartogram-generator
   main-is:             Main.hs
   other-modules:       Helper.MatchGenerator
                      , ImageParse
+                     , ProcessMap
+                     , Cartogram
   -- other-extensions:
   build-depends:       base ^>=4.14.1.0
                      , gloss
