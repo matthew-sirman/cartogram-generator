@@ -39,9 +39,9 @@ pairListsIntoTriples (a:as) (b:bs) (c:cs) =
 
 nRandomColTuples n =
     pairListsIntoTriples
-        (nRandomRGBVals 2 n)
-        (nRandomRGBVals 1 n)
         (nRandomRGBVals 0 n)
+        (nRandomRGBVals 1 n)
+        (nRandomRGBVals 2 n)
 
 colorTupleMap colors els =
     randomColorMapper colors els M.empty
