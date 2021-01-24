@@ -7,7 +7,7 @@ import System.Random
 import qualified Data.Map as M
 
 transposeNestedList nl =
-    if null nl || null (head nl) then [] else
+    if null (head nl) then [] else
         (map head nl) : (transposeNestedList (map tail nl))
 
 padBy paddingEl 0 l = l
@@ -101,12 +101,13 @@ rescaleRows seed scaleFactors cmap =
 -- THE MAIN DRIVER FUNCTION FOR THE ALGORITHM: --
 rescaleAreas seed1 seed2 scaleFactors cmap =
     -- note: do over rows ...
-    let withRowsDone = rescaleRows seed1 scaleFactors cmap in
+    let withRowsDone = padNestedList "" $ rescaleRows seed1 scaleFactors cmap in
     -- ... then transpose and do over "rows" (now columns) ... 
-    let withColumnsDone = rescaleRows seed2 scaleFactors (transposeNestedList withRowsDone) in
+    let withColumnsDone = padNestedList "" $ rescaleRows seed2 scaleFactors (transposeNestedList withRowsDone) in
     -- ... then transpose the result to get back in original orientation
     transposeNestedList withColumnsDone
 
+{-
 processMain :: FilePath -> IO ()
 processMain fp = do
     x <- readImage fp
@@ -119,3 +120,4 @@ processMain fp = do
             pure ()
             where
                 convImage = convertRGB8 im
+-}

@@ -66,8 +66,15 @@ countryMapToColorMap cmap =
 
 getImageFromList nlMap =
     generateImage
+        (\x -> \y -> (nlMap !! y) !! x)
+        (length (head nlMap))
+        (length nlMap)
+{-     
+getImageFromList nlMap =
+    generateImage
         (\x -> \y -> (vmap V.! y) V.! x)
         (V.length (vmap V.! 0))
         (V.length vmap)
     where
         vmap = nestedListToVector nlMap
+-}
