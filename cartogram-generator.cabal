@@ -23,6 +23,7 @@ executable cartogram-generator
                      , ImageGen
                      , ProcessMap
                      , Cartogram
+                     , Scale
   -- other-extensions:
   build-depends:       base ^>=4.14.1.0
                      , gloss

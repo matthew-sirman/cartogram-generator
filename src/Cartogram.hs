@@ -11,6 +11,8 @@ import Codec.Picture
 import DataTools.DataHandle
 import ProcessMap
 
+import Debug.Trace
+
 -- Make Cartogram - takes a colour map file path, a database file path,
 --  format, and a date
 makeCartogram :: FilePath -> FilePath -> CountryData -> UTCTime -> FilePath -> IO ()
@@ -41,7 +43,7 @@ makeCartogram cMapFile mapFile database date destFile = do
             writePng destFile $ 
                 getImageFromList $  
                 countryMapToColorMap $
-                rescaleAreas2 0 scale processed 4
+                rescaleAreas2 0 scale processed 1
                 
             pure ()
             
