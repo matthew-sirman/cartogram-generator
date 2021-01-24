@@ -20,8 +20,13 @@ main = do
     where
         cMapFile = resDir ++ "mapping.csv"
         mapFile = resDir ++ "worldmap225.png"
-        dbFile = resDir ++ "vaccinations/country_data/"
-        fmt = "%Y-%m-%d"
-        dataFormat = [0, 1, -3]
+        -- COVID data
+        -- dbFile = resDir ++ "vaccinations/country_data/"
+        -- fmt = "%Y-%m-%d"
+        -- dataFormat = [0, 1, -3]
+        -- CO2 data
+        dbFile = resDir ++ "CO2/"
+        fmt = "%Y"
+        dataFormat = [0, 1, 2]
         date = parseTimeOrError True defaultTimeLocale "%Y-%m-%d" "2021-01-15"
         destFile = "res/testCarto.png"
