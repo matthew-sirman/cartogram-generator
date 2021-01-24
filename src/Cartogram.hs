@@ -17,7 +17,11 @@ makeCartogram :: FilePath -> FilePath -> FilePath -> String -> UTCTime -> FilePa
 makeCartogram cMapFile mapFile dbFile fmt date destFile = do
     -- load database
     database <- loadData dbFile fmt
-    scale <- pure $ getStatisticScales database date
+    -- scale <- pure $ getStatisticScales database date
+    
+    -- rawData <- pure $ getRawData database date
+    -- print rawData
+    -- print (getTotal rawData)
 
     -- load map picture
     mapImage <- readImage mapFile
@@ -30,8 +34,12 @@ makeCartogram cMapFile mapFile dbFile fmt date destFile = do
         Right (_, cMapCsv) -> do
             processed <- process mapImage $ M.fromList [(let pVal = read (row !! 2) :: Pixel8 in (pVal, pVal, pVal), row !! 0) | row <- records cMapCsv]
             
+            scale <- pure $ getStatisticScales (frequencyMap processed) database date
+
+            --print scale
+
             writePng destFile $ 
-                getImageFromList $
+                getImageFromList $  
                 countryMapToColorMap $
                 rescaleAreas 0 0 scale processed
                 

@@ -64,12 +64,15 @@ countryMapToColorMap cmap =
         colorsMap =
             colorTupleMap (nRandomColTuples 256) (nestedListElements cmap) 
 
+{- 
 getImageFromList nlMap =
     generateImage
         (\x -> \y -> (nlMap !! y) !! x)
         (length (head nlMap))
         (length nlMap)
-{-     
+-}
+
+-- better performance because converts to vector with O(1) access first:
 getImageFromList nlMap =
     generateImage
         (\x -> \y -> (vmap V.! y) V.! x)
@@ -77,4 +80,4 @@ getImageFromList nlMap =
         (V.length vmap)
     where
         vmap = nestedListToVector nlMap
--}
+
