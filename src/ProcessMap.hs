@@ -5,13 +5,16 @@ import ImageParse
 import ImageGen
 import System.Random
 import qualified Data.Map as M
+import Debug.Trace
 
 transposeNestedList nl =
     if null (head nl) then [] else
         (map head nl) : (transposeNestedList (map tail nl))
 
 padBy paddingEl 0 l = l
-padBy paddingEl n l = paddingEl : (padBy paddingEl (n - 1) l)
+padBy paddingEl n l
+    | n < 0 = l
+    | otherwise = paddingEl : (padBy paddingEl (n - 1) l)
 
 nlPadder paddingEl [] [] = []
 nlPadder paddingEl (toAdd:addNums) (l:ls) =
@@ -113,11 +116,10 @@ rowDeltas2 countryPixelLists (ccode:ccodes) acc =
         ccodes
         (pDelta : acc)
 
-
 cmapPixelDeltas2 countryPixelLists [] acc = reverse acc 
 cmapPixelDeltas2 countryPixelLists (row:rows) acc =
-    let (newPixelLists, rowDeltas) = rowDeltas2 countryPixelLists row [] in
-    cmapPixelDeltas2 newPixelLists rows (rowDeltas : acc)
+    let (newPixelLists, calcDeltas) = rowDeltas2 countryPixelLists row [] in
+    cmapPixelDeltas2 newPixelLists rows (calcDeltas : acc)
 
 {-
 cmapPixelDeltas converts a full "image" of country codes (cmap)
@@ -148,8 +150,8 @@ rescaleRows seed scaleFactors cmap =
         (nestedZipper cmap (cmapPixelDeltas scaleFactors cmap))
 
 rescaleRows2 countryPixelLists cmap =
-    map rescaleRow
-        (nestedZipper cmap (cmapPixelDeltas2 countryPixelLists cmap []))
+    let x = (nestedZipper cmap (cmapPixelDeltas2 countryPixelLists cmap [])) in
+    map rescaleRow x
 
 -- THE MAIN DRIVER FUNCTION FOR THE ALGORITHM: (OLD) --
 rescaleAreas seed1 seed2 scaleFactors cmap =
