@@ -88,13 +88,13 @@ charSetParser cs = foldl (<|>) empty $ map charParser cs
 whitespace :: Parser String
 whitespace = many $ charSetParser " \t"
 
-newline :: Parser Char
-newline = charSetParser "\n\r"
+newline :: Parser String
+newline = some $ charSetParser "\n\r"
 
 parseEntry :: Char -> Parser String
 parseEntry delim = many $ exceptCharSetParser special
     where
-        special = ['\n', delim]
+        special = ['\n', '\r', delim]
 
 parseLine :: Char -> Parser [String]
 parseLine delim = do
