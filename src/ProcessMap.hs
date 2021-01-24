@@ -23,10 +23,16 @@ to the front of each list until the length of each list in the list
 is the maximum length of any list in the list.
 -}
 padNestedList paddingEl nl =
-    let lengths = map length nl in
-    let maxlen = maximum lengths in
-    let deltas = map (\len -> maxlen - len) lengths in
-    map reverse (nlPadder paddingEl deltas (map reverse nl))
+    -- map reverse (nlPadder paddingEl deltas (map reverse nl))
+    map (\(r, d) -> leftPadding d ++ r ++ rightPadding d) $ zip nl deltas
+
+    where
+        lengths = map length nl
+        maxlen = maximum lengths
+        deltas = map (\len -> maxlen - len) lengths
+
+        leftPadding d = take (floor $ fromIntegral d / 2) $ repeat paddingEl
+        rightPadding d = take (ceiling $ fromIntegral d / 2) $ repeat paddingEl
 
 
 nRandFloats seed n =
