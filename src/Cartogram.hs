@@ -13,10 +13,10 @@ import ProcessMap
 
 -- Make Cartogram - takes a colour map file path, a database file path,
 --  format, and a date
-makeCartogram :: FilePath -> FilePath -> FilePath -> String -> UTCTime -> FilePath -> IO ()
-makeCartogram cMapFile mapFile dbFile fmt date destFile = do
+makeCartogram :: FilePath -> FilePath -> CountryData -> UTCTime -> FilePath -> IO ()
+makeCartogram cMapFile mapFile database date destFile = do
     -- load database
-    database <- loadData dbFile fmt
+    -- database <- loadData dbFile fmt
     -- scale <- pure $ getStatisticScales database date
     
     -- rawData <- pure $ getRawData database date

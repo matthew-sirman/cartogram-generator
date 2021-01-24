@@ -7,16 +7,21 @@ import ProcessMap
 import Helper.MatchGenerator
 import Cartogram
 import Data.Time
+import DataTools.DataHandle
 
 resDir :: FilePath
 resDir = "res/"
 
 main :: IO ()
-main = makeCartogram cMapFile mapFile dbFile fmt date destFile
+main = do
+    database <- loadData dbFile fmt dataFormat
+    
+    makeCartogram cMapFile mapFile database date destFile
     where
         cMapFile = resDir ++ "mapping.csv"
         mapFile = resDir ++ "worldmap225.png"
         dbFile = resDir ++ "vaccinations/country_data/"
         fmt = "%Y-%m-%d"
+        dataFormat = [0, 1, -3]
         date = parseTimeOrError True defaultTimeLocale "%Y-%m-%d" "2021-01-15"
         destFile = "res/testCarto.png"

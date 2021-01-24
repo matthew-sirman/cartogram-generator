@@ -31,38 +31,45 @@ countryToCode = do
 parseDate :: String -> String -> UTCTime
 parseDate dateString dateFormat = parseTimeOrError True defaultTimeLocale dateFormat dateString
 
+-- Merges two maps giving priority to first
+forgetfulMerge :: (Ord a, Ord c) => M.Map a (M.Map c d) -> M.Map a (M.Map c d) -> M.Map a (M.Map c d)
+forgetfulMerge m1 m2 = M.unionWith (\x -> \y -> M.unionWith (\a -> \b -> a) x y) m1 m2
+
 -- Parses a specific file
-parseFile :: FilePath -> String -> IO ((String, (M.Map UTCTime Float)))
-parseFile filename dateFormat = do
+-- dataFormat is of the form [country_index, date_index, statistic_index]
+parseFile :: FilePath -> String -> [Int] -> IO (M.Map String (M.Map UTCTime Float))
+parseFile filename dateFormat dataFormat = do
     contents <- readFile filename
     pure $ process contents
     
     where
-        process :: String -> (String, (M.Map UTCTime Float))
+        process :: String -> M.Map String (M.Map UTCTime Float)
         process fd = case runParser (csvParser ',' True) fd of
                         Left (Just err) -> error err
                         Left Nothing -> error "Unkown parser error"
-                        Right (_, csv) -> (country, M.fromList (zip [getDate row | row <- records csv] [getStatistic row | row <- records csv]))
-                                            where country = ((records csv) !! 0) !! 0
-                                                  getDate row = parseDate (row !! 1) dateFormat
-                                                  getStatistic row = read (row !! ((length row) - 3)) :: Float
+                        Right (_, csv) -> foldl forgetfulMerge M.empty [M.fromList [(getCountry row, M.fromList [(getDate row, getStatistic row)])] | row <- records csv]
+                                            where getCountry row = row !! ((dataFormat !! 0) `mod` (length row))
+                                                  getDate row = parseDate (row !! ((dataFormat !! 1) `mod` (length row))) dateFormat
+                                                  getStatistic row = read (row !! ((dataFormat !! 2) `mod` (length row))) :: Float
     
     
 -- Loads data from directory with csv names as {Country}.csv
-loadData :: FilePath -> String -> IO (CountryData)
-loadData directory dateFormat = do
+loadData :: FilePath -> String -> [Int] -> IO (CountryData)
+loadData directory dateFormat dataFormat = do
     fileNames <- listDirectory directory
-    dataContent <- sequence [parseFile (directory ++ fileName) dateFormat | fileName <- fileNames]
+    dataContent <- sequence [parseFile (directory ++ fileName) dateFormat dataFormat | fileName <- fileNames]
     
     processedData <- process dataContent
     
     pure $ CountryData { countryData = processedData }
     
     where
-        process :: [(String, (M.Map UTCTime Float))] -> IO (M.Map String (M.Map UTCTime Float))
+        process :: [M.Map String (M.Map UTCTime Float)] -> IO (M.Map String (M.Map UTCTime Float))
         process dataContent = do
             countryCodes <- countryToCode
-            pure $ M.fromList [(let Just countryCode = M.lookup (fst dataPoint) countryCodes in (countryCode, snd dataPoint)) | dataPoint <- dataContent, M.member (fst dataPoint) countryCodes]
+            pure $ M.fromList [(let Just countryCode = M.lookup (fst dataPoint) countryCodes in (countryCode, snd dataPoint)) | dataPoint <- mergedDataContent, M.member (fst dataPoint) countryCodes]
+            where
+                mergedDataContent = M.assocs $ foldl forgetfulMerge M.empty dataContent
 
 -- Interpolates the statistic between two know data points
 interpolate :: (UTCTime, Float) -> (UTCTime, Float) -> UTCTime -> Float
