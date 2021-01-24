@@ -78,3 +78,5 @@ frequencyMap nestedList =
 
 nestedListElements nestedList =
     M.keys (frequencyMap nestedList)
+    -- If changing this: returning keys in ascending order is important!
+    -- (assumed by countryMapToColorMap)
