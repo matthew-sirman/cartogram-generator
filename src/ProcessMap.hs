@@ -64,19 +64,24 @@ more inserted next to it.
 -}
 rowDeltas :: [(Float, Float)] -> [Int]
 rowDeltas [] = []
-rowDeltas ((sf, rand):restRow)
-    | sf <= 1 = maybeDropPixel
-    | otherwise = maybeAddPixels
+rowDeltas ((sf, rand):restRow) =
+    (nPixels - 1) : (rowDeltas restRow)
     where
-        maybeDropPixel =
-            if (1 - sf) / 2 < rand then 0 : (rowDeltas restRow) -- keep pixel
-            else -1 : (rowDeltas restRow) -- drop pixel
-        maybeAddPixels =
-            let certainAdds = floor ((sf - 1) / 2) in
-            if (sf - (fromIntegral certainAdds) - 1) < rand then
-                certainAdds : (rowDeltas restRow) -- don't add pixel
-            else
-                (certainAdds + 1) : (rowDeltas restRow) -- add pixel
+        nPixels = floor $ logBase (1 - p) (1 - rand)
+        p = 1 / (1 + sf)
+
+   --  | sf <= 1 = maybeDropPixel
+   --  | otherwise = maybeAddPixels
+   --  where
+   --      maybeDropPixel =
+   --          if (1 - sf) / 2 < rand then 0 : (rowDeltas restRow) -- keep pixel
+   --          else -1 : (rowDeltas restRow) -- drop pixel
+   --      maybeAddPixels =
+   --          let certainAdds = floor ((sf - 1) / 2) in
+   --          if (sf - (fromIntegral certainAdds) - 1) < rand then
+   --              certainAdds : (rowDeltas restRow) -- don't add pixel
+   --          else
+   --              (certainAdds + 1) : (rowDeltas restRow) -- add pixel
 
 {-
 cmapPixelDeltas converts a full "image" of country codes (cmap)
