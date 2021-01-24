@@ -41,7 +41,7 @@ makeCartogram cMapFile mapFile database date destFile = do
             writePng destFile $ 
                 getImageFromList $  
                 countryMapToColorMap $
-                rescaleAreas 0 0 scale processed
+                rescaleAreas2 0 scale processed 4
                 
             pure ()
             

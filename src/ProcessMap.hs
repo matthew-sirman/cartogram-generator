@@ -56,6 +56,25 @@ scaleFactorsMap scaleFactors cmap =
 nestedZipper [] [] = []
 nestedZipper (a:as) (b:bs) = (zip a b) : (nestedZipper as bs)
 
+randList :: [Float] -> Int -> Int -> [Int]
+randList rands 0 1  = [0]
+randList rands 1 1 = [1]
+randList rands totalOnes listLength =
+    let r = head rands in
+    let p = (fromIntegral totalOnes) / (fromIntegral listLength) in
+    if r < p then
+        1 : (randList (tail rands) (totalOnes - 1) (listLength - 1))
+    else
+        0 : (randList (tail rands) totalOnes (listLength - 1))
+
+randListWithSum :: [Float] -> Int -> Int -> [Int]
+randListWithSum rands sum listLength =
+    let asum = abs sum
+        certain = asum `div` listLength
+        totalProbAdds = asum - certain * listLength
+        lst = zipWith (+) (take listLength $ repeat certain) (randList rands totalProbAdds listLength) in
+    if sum >= 0 then lst else (map (\x -> -1 * x) lst)
+
 {-
 rowDeltas takes in a zipped row of (scaleFactor, randomNumber)
 pairs and returns a row with integers corresponding to whether
@@ -83,6 +102,23 @@ rowDeltas ((sf, rand):restRow) =
    --          else
    --              (certainAdds + 1) : (rowDeltas restRow) -- add pixel
 
+
+rowDeltas2 :: M.Map String [Int] -> [String] -> [Int] -> (M.Map String [Int], [Int])
+rowDeltas2 countryPixelLists [] acc =
+    (countryPixelLists, reverse acc)
+rowDeltas2 countryPixelLists (ccode:ccodes) acc =
+    let pDelta : restPList = M.findWithDefault [0] ccode countryPixelLists in
+    rowDeltas2
+        (M.insert ccode restPList countryPixelLists)
+        ccodes
+        (pDelta : acc)
+
+
+cmapPixelDeltas2 countryPixelLists [] acc = reverse acc 
+cmapPixelDeltas2 countryPixelLists (row:rows) acc =
+    let (newPixelLists, rowDeltas) = rowDeltas2 countryPixelLists row [] in
+    cmapPixelDeltas2 newPixelLists rows (rowDeltas : acc)
+
 {-
 cmapPixelDeltas converts a full "image" of country codes (cmap)
 into one with an integer for deleting / duplicating a pixel.
@@ -92,6 +128,8 @@ cmapPixelDeltas scaleFactors cmap =
         (nestedZipper
             (scaleFactorsMap scaleFactors cmap)
             (randFloatsMap 0 cmap))
+
+
 
 {-
 rescaleRow takes in a list of (countryCode, n :: Integer) tuples,
@@ -109,7 +147,11 @@ rescaleRows seed scaleFactors cmap =
     map rescaleRow
         (nestedZipper cmap (cmapPixelDeltas scaleFactors cmap))
 
--- THE MAIN DRIVER FUNCTION FOR THE ALGORITHM: --
+rescaleRows2 countryPixelLists cmap =
+    map rescaleRow
+        (nestedZipper cmap (cmapPixelDeltas2 countryPixelLists cmap []))
+
+-- THE MAIN DRIVER FUNCTION FOR THE ALGORITHM: (OLD) --
 rescaleAreas seed1 seed2 scaleFactors cmap =
     -- note: do over rows ...
     let withRowsDone = padNestedList "" $ rescaleRows seed1 scaleFactors cmap in
@@ -117,6 +159,49 @@ rescaleAreas seed1 seed2 scaleFactors cmap =
     let withColumnsDone = padNestedList "" $ rescaleRows seed2 scaleFactors (transposeNestedList withRowsDone) in
     -- ... then transpose the result to get back in original orientation
     transposeNestedList withColumnsDone
+
+getCountryPixelLists rands countryAreas pixelDeltasMap =
+    M.fromList
+        (map
+            (\(ccode, area) ->
+                let toAdd = M.findWithDefault 0 ccode pixelDeltasMap in
+                (ccode, (randListWithSum rands toAdd area)))
+            (M.assocs countryAreas))
+
+rescaleAreas2Round seed1 seed2 pixelDeltasMap cmap =
+    let countryPixelLists1 = getCountryPixelLists (randoms (mkStdGen seed1)) (frequencyMap cmap) pixelDeltasMap
+        withRowsDone = padNestedList "" $ rescaleRows2 countryPixelLists1 cmap
+        countryPixelLists2 = getCountryPixelLists (randoms (mkStdGen seed2)) (frequencyMap withRowsDone) pixelDeltasMap
+        withColumnsDone = padNestedList "" $ rescaleRows2 countryPixelLists2 (transposeNestedList withRowsDone) in
+    transposeNestedList withColumnsDone
+
+rescaleAreas2Rounds intRands pixelDeltasMap cmap rounds =
+    if rounds == 0 then
+        cmap
+    else
+        let r1:r2:restRands = intRands in
+        rescaleAreas2Rounds
+            restRands
+            pixelDeltasMap
+            (rescaleAreas2Round r1 r2 pixelDeltasMap cmap)
+            (rounds - 1)
+
+countryPixelDeltas :: M.Map String Float -> M.Map String Int -> M.Map String Int
+countryPixelDeltas scaleFactors countryAreas =
+    M.fromList
+        (map
+            (\(ccode, area) ->
+                let sf = (M.findWithDefault 0 ccode scaleFactors) in
+                (ccode, floor ((sf - 1) * fromIntegral area)))
+            (M.assocs countryAreas))
+
+rescaleAreas2 :: Int -> M.Map String Float -> [[String]] -> Int -> [[String]]
+rescaleAreas2 seed scaleFactors cmap rounds =
+    rescaleAreas2Rounds
+        (randoms (mkStdGen seed))
+        (countryPixelDeltas scaleFactors (frequencyMap cmap))
+        cmap
+        rounds
 
 {-
 processMain :: FilePath -> IO ()
