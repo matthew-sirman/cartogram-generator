@@ -1,4 +1,4 @@
-module DataHandle(
+module DataTools.DataHandle(
       CountryData(..)
     , loadData
     , fetchData
@@ -43,7 +43,7 @@ parseFile filename dateFormat = do
                         Right (_, csv) -> (country, M.fromList (zip [getDate row | row <- records csv] [getStatistic row | row <- records csv]))
                                             where country = ((records csv) !! 0) !! 0
                                                   getDate row = parseDate (row !! 1) dateFormat
-                                                  getStatistic row = read (row !! 4) :: Float
+                                                  getStatistic row = read (row !! ((length row) - 3)) :: Float
     
     
 -- Loads data from directory with csv names as {Country}.csv
@@ -63,7 +63,7 @@ loadData directory dateFormat = do
             pure $ M.fromList [(let Just countryCode = M.lookup (fst dataPoint) countryCodes in (countryCode, snd dataPoint)) | dataPoint <- dataContent, M.member (fst dataPoint) countryCodes]
 
 -- Interpolates the statistic between two know data points
-interpolate :: (UTCTime, Float) -> (UTCTime, Float) -> UTCTime -> Float 
+interpolate :: (UTCTime, Float) -> (UTCTime, Float) -> UTCTime -> Float
 interpolate (d1, f1) (d2, f2) d = f1 + (f2 - f1) * deltaT / totalT
     where deltaT = fromIntegral $ round $ nominalDiffTimeToSeconds (diffUTCTime d d1)
           totalT = fromIntegral $ round $ nominalDiffTimeToSeconds (diffUTCTime d2 d1)
