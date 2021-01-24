@@ -27,8 +27,8 @@ getStatisticScales countryAreas database date =
     M.fromList
         (map
             (\(ccode, area) ->
-                (ccode, if ccode == "GBR" then 1 else 1))
-                    --totalArea * (M.findWithDefault 0 ccode relStats) / area))
+                (ccode, --if ccode == "ISR" then 10 else 1))
+                    totalArea * (M.findWithDefault 0 ccode relStats) / area))
             countryAreaList)
     where
         countryAreaList = M.assocs countryAreas
