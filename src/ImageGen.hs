@@ -57,12 +57,15 @@ countryMapToColorMap cmap =
         (\row -> (map
             (\ccode -> case (M.lookup ccode colorsMap) of
                 Just (r, g, b) -> PixelRGB8 r g b
-                Nothing -> PixelRGB8 0 0 0)
+                Nothing -> PixelRGB8 0 0 0) -- <- this sets the background color
             row))
         cmap
     where
         colorsMap =
-            colorTupleMap (nRandomColTuples 256) (nestedListElements cmap) 
+            colorTupleMap
+                (nRandomColTuples 256)
+                (tail (nestedListElements cmap)) -- remove empty string (ocean)
+                -- (guaranteed to be first because elements are returned in ascending order) 
 
 {- 
 getImageFromList nlMap =
