@@ -10,6 +10,7 @@ import Data.Time
 import Data.List (sort)
 import System.IO
 import System.Directory (listDirectory)
+import Text.Read (readMaybe)
 
 data CountryData = CountryData { countryData :: M.Map String (M.Map UTCTime Float) } deriving Show
 
@@ -47,10 +48,10 @@ parseFile filename dateFormat dataFormat = do
         process fd = case runParser (csvParser ',' True) fd of
                         Left (Just err) -> error err
                         Left Nothing -> error "Unkown parser error"
-                        Right (_, csv) -> foldl forgetfulMerge M.empty [M.fromList [(getCountry row, M.fromList [(getDate row, getStatistic row)])] | row <- records csv]
+                        Right (_, csv) -> foldl forgetfulMerge M.empty [M.fromList [(getCountry row, M.fromList [(getDate row, let Just v = getStatistic row in v)])] | row <- records csv, getStatistic row /= Nothing]
                                             where getCountry row = row !! ((dataFormat !! 0) `mod` (length row))
                                                   getDate row = parseDate (row !! ((dataFormat !! 1) `mod` (length row))) dateFormat
-                                                  getStatistic row = read (row !! ((dataFormat !! 2) `mod` (length row))) :: Float
+                                                  getStatistic row = readMaybe (row !! ((dataFormat !! 2) `mod` (length row))) :: Maybe Float
     
     
 -- Loads data from directory with csv names as {Country}.csv
