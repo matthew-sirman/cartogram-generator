@@ -19,15 +19,15 @@ in place of pixels, or the emptry string if the pixel
 has a color not corresponding to a country.
 -}
 rowLooper img y x =
-    if x == -1 then [] else
-        (pixelAt img x y) : (rowLooper img y (x - 1))
+    if x == (imageWidth img) then [] else
+        (pixelAt img x y) : (rowLooper img y (x + 1))
 
 parseImage img =
     map (parseImgRow img)
         [0..((imageHeight img) - 1)]
     where
         parseImgRow img y =
-            rowLooper img y ((imageWidth img) - 1)
+            rowLooper img y 0
 
 pixelToTuple (PixelRGB8 r g b) = (r, g, b)
 

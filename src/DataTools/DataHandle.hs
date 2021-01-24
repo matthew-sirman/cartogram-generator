@@ -21,7 +21,8 @@ countryToCode = do
     where
         process :: String -> M.Map String String
         process fd = case runParser (csvParser ',' True) fd of
-                        Left err -> error "Parser error"
+                        Left (Just err) -> error err
+                        Left Nothing -> error "Unkown parser error"
                         Right (_, csv) -> M.fromList $ zip [record !! 0 | record <- records csv] [record !! 1 | record <- records csv]
     
     
@@ -31,7 +32,7 @@ parseDate :: String -> String -> UTCTime
 parseDate dateString dateFormat = parseTimeOrError True defaultTimeLocale dateFormat dateString
 
 -- Parses a specific file
-parseFile :: String -> String -> IO ((String, (M.Map UTCTime Float)))
+parseFile :: FilePath -> String -> IO ((String, (M.Map UTCTime Float)))
 parseFile filename dateFormat = do
     contents <- readFile filename
     pure $ process contents
@@ -39,7 +40,8 @@ parseFile filename dateFormat = do
     where
         process :: String -> (String, (M.Map UTCTime Float))
         process fd = case runParser (csvParser ',' True) fd of
-                        Left err -> error "Parser error"
+                        Left (Just err) -> error err
+                        Left Nothing -> error "Unkown parser error"
                         Right (_, csv) -> (country, M.fromList (zip [getDate row | row <- records csv] [getStatistic row | row <- records csv]))
                                             where country = ((records csv) !! 0) !! 0
                                                   getDate row = parseDate (row !! 1) dateFormat
@@ -47,7 +49,7 @@ parseFile filename dateFormat = do
     
     
 -- Loads data from directory with csv names as {Country}.csv
-loadData :: String -> String -> IO (CountryData)
+loadData :: FilePath -> String -> IO (CountryData)
 loadData directory dateFormat = do
     fileNames <- listDirectory directory
     dataContent <- sequence [parseFile (directory ++ fileName) dateFormat | fileName <- fileNames]
