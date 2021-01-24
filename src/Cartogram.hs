@@ -13,8 +13,8 @@ import ProcessMap
 
 -- Make Cartogram - takes a colour map file path, a database file path,
 --  format, and a date
-makeCartogram :: FilePath -> FilePath -> FilePath -> String -> UTCTime -> IO ()
-makeCartogram cMapFile mapFile dbFile fmt date = do
+makeCartogram :: FilePath -> FilePath -> FilePath -> String -> UTCTime -> FilePath -> IO ()
+makeCartogram cMapFile mapFile dbFile fmt date destFile = do
     -- load database
     database <- loadData dbFile fmt
     scale <- pure $ getStatisticScales database date
@@ -30,7 +30,7 @@ makeCartogram cMapFile mapFile dbFile fmt date = do
         Right (_, cMapCsv) -> do
             processed <- process mapImage $ M.fromList [(let pVal = read (row !! 2) :: Pixel8 in (pVal, pVal, pVal), row !! 0) | row <- records cMapCsv]
             
-            writePng "res/testCarto.png" $ 
+            writePng destFile $ 
                 getImageFromList $
                 countryMapToColorMap $
                 rescaleAreas 0 0 scale processed
