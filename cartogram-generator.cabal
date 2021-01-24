@@ -20,6 +20,7 @@ executable cartogram-generator
   main-is:             Main.hs
   other-modules:       Helper.MatchGenerator
                      , ImageParse
+                     , ImageGen
                      , ProcessMap
                      , Cartogram
   -- other-extensions:
